@@ -184,7 +184,7 @@ with st.form("booking_form", clear_on_submit=True):
     with col2:
         end_time = st.time_input("⏳ وقت الانتهاء:")
         
-    submit = st.form_submitbutton("✨ تأكيد الحجز وإدراجه في الجدول")
+    submit = st.form_submit_button("✨ تأكيد الحجز وإدراجه في الجدول")
 
 if submit:
     if start_time >= end_time:
