@@ -52,7 +52,7 @@ if st.session_state.user_name is None:
     with st.form("login_form"):
         login_name = st.text_input("👤 اكتب اسمك الكريم:")
         login_pass = st.text_input("🔑 ضع رمزك السري الخاص (لحماية حجوزاتك):", type="password")
-        login_submit = st.form_submit_with_button("دخول آمن إلى النظام ←")
+        login_submit = st.form_submit_button("دخول آمن إلى النظام ←")
         
     if login_submit:
         if not login_name or not login_pass:
