@@ -207,7 +207,7 @@ st.divider()
 st.markdown("### 📅 حجز دور جديد سريع")
 with st.form("booking_form", clear_on_submit=True):
     device = st.selectbox("اختر الجهاز المطلوب:", ["الغسالة", "النشافة"])
-    booking_date = st.date_input("اختر تاريخ اليوم أو الغد:", min_value=now.date()
+    booking_date = st.date_input("📅 اختر تاريخ اليوم أو الغد:", min_value=now.date())
     
     col1, col2 = st.columns(2)
     with col1:
