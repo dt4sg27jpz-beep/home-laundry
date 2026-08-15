@@ -70,21 +70,22 @@ if st.session_state.user_name is None:
             # خيار إضافي لإنشاء حساب جديد بنفس الشاشة
             st.markdown("---")
             action = st.radio("هل لديك حساب؟", ["تسجيل الدخول 🔒", "إنشاء حساب جديد 👥"], horizontal=True)
-            
-            if action == "إنشاء حساب جديد 👥":
-                new_user = st.text_input("اختر اسم مستخدم (بالإنجليزي):", key="reg_user").strip().lower()
-                new_name = st.text_input("اكتب اسمك الكريم (بالعربي):", key="reg_name").strip()
-                new_pass = st.text_input("اختر رمزك السري الجديد:", type="password", key="reg_pass")
-                
-                if st.form_submit_button("🚀 تسجيل حسابي الجديد"):
-                    if not new_user or not new_name or not new_pass:
-                        st.error("⚠️ يرجى تعبئة جميع الخانات!")
-                    elif new_user in st.session_state["family_accounts"]:
-                        st.error("❌ اسم المستخدم هذا محجوز لشخص آخر في البيت!")
-                    else:
-                        st.session_state["family_accounts"][new_user] = {"name": new_name, "password": new_pass}
-                        st.success(f"✅ تم إنشاء حسابك بنجاح يا {new_name}! اختر الآن 'تسجيل الدخول' للدخول.")
-            
+
+       if action == "إنشاء حساب جديد 👥":
+                with st.form("register_form"):
+                    new_user = st.text_input("اختر اسم مستخدم (بالإنجليزي):", key="reg_user").strip().lower()
+                    new_name = st.text_input("اكتب اسمك الكريم (بالعربي):", key="reg_name").strip()
+                    new_pass = st.text_input("اختر رمزك السري الجديد:", type="password", key="reg_pass")
+                    submit_reg = st.form_submit_button("🚀 تسجيل حسابي الجديد")
+                    
+                    if submit_reg:
+                        if not new_user or not new_name or not new_pass:
+                            st.error("⚠️ يرجى تعبئة جميع الخانات!")
+                        elif new_user in st.session_state["family_accounts"]:
+                            st.error("❌ اسم المستخدم هذا محجوز لشخص آخر في البيت!")
+                        else:
+                            st.session_state["family_accounts"][new_user] = {"name": new_name, "password": new_pass}
+                            st.success(f"✅ تم إنشاء حسابك بنجاح يا {new_name}! اختر الآن 'تسجيل الدخول' للدخول.") 
             else:
                 user_key = login_name.strip().lower()
                 if user_key in st.session_state["family_accounts"] and st.session_state["family_accounts"][user_key]["password"] == login_pass:
