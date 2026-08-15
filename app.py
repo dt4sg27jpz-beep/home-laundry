@@ -57,8 +57,8 @@ if st.session_state.user_name is None:
         
     if login_submit:
         if not login_name or not login_pass:
-        st.warning("⚠️ الرجاء إدخال الاسم والرمز السري للدخول")
-            else:
+            st.warning("⚠️ الرجاء إدخال الاسم والرمز السري للدخول")
+    else:
             # إنشاء صندوق حفظ عام لأسماء العائلة الممسجلة إذا لم يكن موجوداً
             if "registered_users" not in st.session_state["global_bookings"]:
                 if "family_accounts" not in st.session_state:
