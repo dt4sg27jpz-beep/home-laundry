@@ -258,9 +258,9 @@ if submit:
                 # 📊 3️⃣ قسم عرض الحجوزات النشطة وإلغائها في أي وقت لجميع العائلة
                 st.markdown("---")
                 st.subheader("📊 جدول الحجوزات النشطة في البيت")
-
-                if not st.session_state.bookings:
-                st.info("🎉 الأجهزة متاحة حالياً ولا توجد أي حجوزات نشطة!")
+             
+if not st.session_state.bookings:
+    st.info("🎉 الأجهزة متاحة حالياً ولا توجد أي حجوزات نشطة!")
 else:
     # عرض كل حجز مسجل في الصندوق الموحد
     for idx, b in enumerate(st.session_state.bookings):
