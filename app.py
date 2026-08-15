@@ -3,7 +3,7 @@ import datetime
 import pandas as pd
 import time
 if "global_bookings" not in st.session_state:
-st.session_state["global_bookings"] = []
+    st.session_state["global_bookings"] = []
 # إعدادات المظهر الفخم والواجهة الاحترافية
 st.set_page_config(
     page_title="المنظم الذكي | غسيل وتجفيف البيت", 
