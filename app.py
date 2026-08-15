@@ -71,7 +71,7 @@ if st.session_state.user_name is None:
             st.markdown("---")
             action = st.radio("هل لديك حساب؟", ["تسجيل الدخول 🔒", "إنشاء حساب جديد 👥"], horizontal=True)
 
-       if action == "إنشاء حساب جديد 👥":
+            if action == "إنشاء حساب جديد 👥":
                 with st.form("register_form"):
                     new_user = st.text_input("اختر اسم مستخدم (بالإنجليزي):", key="reg_user").strip().lower()
                     new_name = st.text_input("اكتب اسمك الكريم (بالعربي):", key="reg_name").strip()
