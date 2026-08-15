@@ -1,4 +1,5 @@
-import os, time; os.environ['TZ'] = 'Asia/Riyadh'; time.tzset() # ضبط توقيت الرياض بدقة
+if "global_bookings" not in st.session_state:
+    st.session_state["global_bookings"] = []
 import streamlit as st
 import datetime
 import pandas as pd
@@ -37,7 +38,7 @@ st.markdown("<p style='text-align: center; color: #7F8C8D;'>المنصة الف�
 
 # قاعدة بيانات خفيفة وسريعة في ذاكرة المتصفح لمنع التعليق
 if 'bookings' not in st.session_state:
-    st.session_state.bookings = []
+   st.session_state.bookings = st.session_state["global_bookings"] 
 if 'is_coming' not in st.session_state:
     st.session_state.is_coming = {}
 if 'user_name' not in st.session_state:
@@ -56,14 +57,44 @@ if st.session_state.user_name is None:
         
     if login_submit:
         if not login_name or not login_pass:
-            st.warning("الرجاء إدخال الاسم والرمز السري للدخول.")
-        else:
-            st.session_state.user_name = login_name.strip()
-            st.session_state.user_password = login_pass
-            st.success(f"✨ مرحباً بك يا {st.session_state.user_name}! يتم الآن تحميل لوحة التحكم...")
-            time.sleep(0.5)
-            st.rerun()
-    st.markdown("</div>", unsafe_allow_html=True)
+            st.warning("الرجاء إدخال الاسم والرمز السري للدخول."), unsafe_allow_html=True)
+            else:
+            # إنشاء صندوق حفظ عام لأسماء العائلة الممسجلة إذا لم يكن موجوداً
+            if "registered_users" not in st.session_state["global_bookings"]:
+                if "family_accounts" not in st.session_state:
+                    st.session_state["family_accounts"] = {
+                        "turki": {"name": "تركي", "password": "123"},
+                        "abdullah": {"name": "عبد الله", "password": "456"}
+                    }
+
+            # خيار إضافي لإنشاء حساب جديد بنفس الشاشة
+            st.markdown("---")
+            action = st.radio("هل لديك حساب؟", ["تسجيل الدخول 🔒", "إنشاء حساب جديد 👥"], horizontal=True)
+            
+            if action == "إنشاء حساب جديد 👥"
+                new_user = st.text_input("اختر اسم مستخدم (بالإنجليزي):", key="reg_user").strip().lower()
+                new_name = st.text_input("اكتب اسمك الكريم (بالعربي):", key="reg_name").strip()
+                new_pass = st.text_input("اختر رمزك السري الجديد:", type="password", key="reg_pass")
+                
+                if st.form_submit_button("🚀 تسجيل حسابي الجديد"):
+                    if not new_user or not new_name or not new_pass:
+                        st.error("⚠️ يرجى تعبئة جميع الخانات!")
+                    elif new_user in st.session_state["family_accounts"]:
+                        st.error("❌ اسم المستخدم هذا محجوز لشخص آخر في البيت!")
+                    else:
+                        st.session_state["family_accounts"][new_user] = {"name": new_name, "password": new_pass}
+                        st.success(f"✅ تم إنشاء حسابك بنجاح يا {new_name}! اختر الآن 'تسجيل الدخول' للدخول.")
+            
+            else:
+                user_key = login_name.strip().lower()
+                if user_key in st.session_state["family_accounts"] and st.session_state["family_accounts"][user_key]["password"] == login_pass:
+                    st.session_state.user_name = st.session_state["family_accounts"][user_key]["name"]
+                    st.session_state.user_password = login_pass
+                    st.success(f"✨ مرحباً بك يا {st.session_state.user_name}! يتم الآن تحميل لوحة التحكم...")
+                    time.sleep(0.5)
+                    st.rerun()
+                else:
+                    st.error("❌ اسم المستخدم أو الرمز السري غير صحيح!")
     st.stop()
 
 # ----------------- 📖 شريط التحكم ودليل الاستخدام الفخم (Sidebar) -----------------
@@ -87,7 +118,7 @@ if st.sidebar.button("🚪 تسجيل الخروج"):
     st.rerun()
 
 # الأوقات الحالية المسندة بدقة لمنع التعليق
-now = datetime.datetime.now()
+now = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=3)
 current_time = now.time()
 current_date = now.date()
 
@@ -176,7 +207,7 @@ st.divider()
 st.markdown("### 📅 حجز دور جديد سريع")
 with st.form("booking_form", clear_on_submit=True):
     device = st.selectbox("اختر الجهاز المطلوب:", ["الغسالة", "النشافة"])
-    booking_date = st.date_input("اختر تاريخ اليوم أو الغد:", min_value=datetime.date.today())
+    booking_date = st.date_input("اختر تاريخ اليوم أو الغد:", min_value=now.date()
     
     col1, col2 = st.columns(2)
     with col1:
@@ -224,3 +255,24 @@ if submit:
                 st.success(f"✅ تم حجز {device} بنجاح يا {st.session_state.user_name}! المدة المجدولة: {int(duration_minutes)} دقيقة.")
                 time.sleep(0.5)
                 st.rerun()
+                # 📊 3️⃣ قسم عرض الحجوزات النشطة وإلغائها في أي وقت لجميع العائلة
+                st.markdown("---")
+                st.subheader("📊 جدول الحجوزات النشطة في البيت")
+
+                if not st.session_state.bookings:
+                st.info("🎉 الأجهزة متاحة حالياً ولا توجد أي حجوزات نشطة!")
+else:
+    # عرض كل حجز مسجل في الصندوق الموحد
+    for idx, b in enumerate(st.session_state.bookings):
+        # تصميم بطاقة فخمة لكل حجز
+        st.info(f"👤 **المستفيد:** {b['name']} | 📱 **الجهاز:** {b['device']} \n\n 📅 **التاريخ:** {b['date']} | ⏰ **الوقت:** من {b['start_time'].strftime('%H:%M')} إلى {b['end_time'].strftime('%H:%M')}")
+        
+        # إظهار زر الإلغاء للشخص صاحب الحجز فقط لحمايته من تلاعب الآخرين
+        if st.session_state.user_name == b['name']:
+            if st.button(f"❌ إلغاء حجزي لـ ({b['device']})", key=f"cancel_{idx}"):
+                # حذف الحجز من الصندوق الموحد فوراً وفي أي وقت
+                st.session_state.bookings.pop(idx)
+                st.success("✅ تم إلغاء حجزك بنجاح وتحرير الجهاز للجميع!")
+                time.sleep(0.5)
+                st.rerun()                
+
